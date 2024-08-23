@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Prognostic Model for Lung Adenocarcinoma</title>
+		<link rel="icon" href="lungicon.ico" />
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<style type="text/css">
+			#title{
+				background-color: #0B1746;
+				margin-left: 8%;
+				margin-right: 8%;
+				color:white;
+				font-size: 26px;
+				box-sizing: border-box;
+				min-height: 100%;
+				}
+			.left {
+			  float: left;
+			  width: 38%;
+			  margin-left: 8%;
+			 /* background-color: gray; */
+				}
+			.right {
+			  margin-left: 54%;
+			  margin-right: 8%;
+			  margin-top: 40px;
+			  width: 38%;
+			/* background-color: lightgray; */
+			  	}
+			.input{
+				width: 150px;
+				height: 30px;
+				border: 1px solid #000000;
+				border-radius: 5px;
+				color: black;
+				font-size: 15px;
+				font-weight: bold;
+				background-color: #f8f3ee;
+				text-indent: 5px;
+				}
+			.rslt{
+				width: 150px;
+				height: 30px;
+				border: 1px solid #000000;
+				border-radius: 5px;
+				color: black;
+				font-size: 20px;
+				font-weight: bold;
+				background-color: #f8f3ee;
+				text-indent: 5px;
+			}
+			footer{
+				margin-bottom: 20%;
+				text-align: center;
+				}
+			.footer-text {  
+			    margin-top: 130px; /* 增加顶部边距以调整位置 */  
+			    font-size: 12px;  /* 调整字号 */ 
+				text-align: center;
+			}  
+			.btn{
+				background-color:#3c7dde;
+				color:white;
+				width: 50px;
+				height: 30px;
+				border:0;
+				font-size: 16px;
+				box-sizing: content-box;
+				border-radius: 5px;
+			}
+			.btn:hover{
+				background-color:#309be2;
+			}
+			button{
+				background-color:#3c7dde;
+				color:white;
+				width: 50px;
+				height: 30px;
+				border:0;
+				font-size: 16px;
+				box-sizing: content-box;
+				border-radius: 5px;
+				}
+			 button:hover{
+				background-color:#309be2;
+				}
+			a:link,:visited{
+				text-decoration: none;
+				color: white;
+				}
+		</style>
+	</head>
+	<body>
+		<!-- 以下针对网页头部 -->
+		<div id="title">
+			<h1 style="text-align: center;display:block;">&nbsp;肺腺癌临床预后预测模型</h1>
+		</div>
+		<!-- 以下为网页主体 -->
+		<div class="box">
+			<!-- 以下为左边Introduction -->
+		    <div class="left">
+				<hr style="background-color: #de4b49;height: 3px;border: none;"/>
+				<p><h3 style="font-size: 26px;">介绍</h3></p>
+				<span style="line-height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;肺癌是最常见的恶性肿瘤之一，肺腺癌作为其中最常见的亚型，严重危害人类的健康。常规的手术、放射治疗、药物治疗已经无法满足部分患者的需求，免疫治疗逐渐成为热点。在肿瘤组织中发现了一个由肿瘤浸润淋巴细胞TIL构成的异位淋巴聚集体，即三级淋巴结构，有望作为预测免疫治疗反应的监测因子。 
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在此网站，我们将在解析肺腺癌患者肿瘤不同区域的TLS和TIL分布特征与探究TLS和TIL与患者临床特征及预后的相关性的基础上构建肺腺癌预后预测模型，为肺腺癌患者的精准治疗及预后评估提供新的思路和方向。</span>
+			</div>
+			<!-- 以下为右边输入框 -->
+		    <div class="right">
+				<form action="#" method="post" name="myform" id="myform">
+					<p>	<h3 style="font-size: 26px;">预后模型</h3></p>
+					<p><b>CEA(ng/ml) :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b><input class="input" type="text" name="Factor1" autocomplete="off"/></p>
+					<p><b>性别 : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b><input type="radio" name="gender" value="1" style="font-size: 15px;" onclick="setf3(this.value)"/><b>男</b>
+					<input type="radio" name="gender" value="2" style="font-size: 15px;" onclick="setf3(this.value)"/><b>女</b></p>
+					<p><b>IT区TLS密度(个/mm²) <img src="i.png" title="肿瘤组织内TLS的密度(/mm²)"> : </b><input class="input" type="text" name="Factor2" autocomplete="off"/></p>
+					<div style="text-align:center"><input class="btn" type="button" value="运行" onclick="predict()"/>&nbsp;&nbsp;&nbsp;&nbsp;<input class="btn" type="reset" value="重置"/></div>
+					<p><b> 1 年生存率 : </b><input class="rslt" name="Result1" type="text" autocomplete="off"/></p>
+					<p><b> 3 年生存率 : </b><input class="rslt" name="Result3" type="text" autocomplete="off"/></p>
+				</form>
+			</div>
+		</div>
+		<!-- 以下为计算代码 -->
+		<script>
+			var f1=0
+			var f2=0
+			var f3=0
+			
+			
+			function setf3(gender) {
+			    f3 = parseInt(gender);
+			    console.log('f3 的值为：' + f3);
+			}
+			
+			function predict(){
+				f1=parseFloat(document.myform.Factor1.value);
+				f2=parseFloat(document.myform.Factor2.value);
+				
+				
+				if(isNaN(f1) || isNaN(f2) || isNaN(f3) ){
+				    alert("请填写数据！");
+					return
+				}
+				 // 检查单选框是否选中
+				if(document.querySelector('input[name="gender"]:checked') === null){
+				    alert("请填写数据！");
+				    return;
+				}
+				
+				if(f1<=5){
+					v1=0
+				}
+				else if(f1>5){
+					v1=77.9
+				}
+				if(f2<=0.1){
+					v2=100
+				}
+				else{
+					v2=0
+				}
+				if(f3==1){
+					v3=0
+				}
+				else if(f3==2){
+					v3=81.7
+				}
+				
+				sum=v1+v2+v3
+				// 1年生存率
+				if(sum<138){
+					prob1=">90%"
+				}else if((sum>=138)&&(sum<175)){
+					prob1="80-90%"
+				}else if((sum>=175)&&(sum<198)){
+					prob1="70-80%"
+				}else if(sum>=259){
+					prob1="<30%"
+				}
+				// 3年生存率
+				if(sum<96.2){
+					prob3=">90%"
+				}else if((sum>=156.2)&&(sum<173.9)){
+					prob3="60-70%"
+				}else if((sum>=173.9)&&(sum<188.9)){
+					prob3="50-60%"
+				}else if(sum>=248){
+					prob3="<10%"
+				}
+				
+				document.myform.Result1.value=prob1
+				document.myform.Result3.value=prob3
+				}
+				
+			
+		</script>
+		<!-- 以下为页尾 -->
+		<div id="footer">  
+		     <p class="footer-text">*结果仅供临床参考* </p>
+		</div> 
+		  
+	</body>
+</html>
